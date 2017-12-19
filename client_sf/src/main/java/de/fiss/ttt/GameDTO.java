@@ -3,10 +3,12 @@ package de.fiss.ttt;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GameDTO {
+public class GameDTO implements Cloneable {
     private int[][] game;
     private int winner;
     private int toPlay;
+
+    public GameDTO() {}
 
     public GameDTO(int[][] game, int winner, int toPlay) {
         this.game = game;
