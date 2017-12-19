@@ -1,10 +1,9 @@
 package de.fiss.ttt;
 
 import de.fiss.ttt.ai.MoveAdvisor;
-import de.fiss.ttt.ai.random.RandomMoveAdvisor;
+import de.fiss.ttt.ai.RandomMoveAdvisor;
+import de.fiss.ttt.ai.TicTacToeMinMaxAdvisor;
 import de.fiss.ttt.model.TicTacToeGame;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
@@ -12,7 +11,8 @@ import java.util.Optional;
 
 public class Application {
     static MoveAdvisor<TicTacToeGame, TicTacToeGame.Move> advisor
-            = new RandomMoveAdvisor<TicTacToeGame, TicTacToeGame.Move>();
+            = new TicTacToeMinMaxAdvisor();
+      //  = new RandomMoveAdvisor<>();
 
     static int player = 2;
 
@@ -24,7 +24,7 @@ public class Application {
             GameDTO game = restTemplate.getForObject("http://localhost:8080/game/status", GameDTO.class);
 
             if(game.getToPlay() != player) {
-                Thread.sleep(1000);
+                Thread.sleep(100);
                 continue;
             }
 

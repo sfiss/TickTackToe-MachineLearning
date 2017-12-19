@@ -1,4 +1,4 @@
-package de.fiss.ttt.ai.random;
+package de.fiss.ttt.ai;
 
 import de.fiss.ttt.ai.MoveAdvisor;
 import de.fiss.ttt.model.Board;
@@ -10,7 +10,7 @@ public class RandomMoveAdvisor<B extends Board, M extends Move> implements MoveA
 
     @Override
     public Optional<M> suggestMove(Board board) {
-        List<M> moves = new ArrayList<>(board.getPossibleMoves());
+        List<M> moves = new ArrayList<>(board.getPossibleMoves(board.getState()));
         Collections.shuffle(moves);
         return moves.size() == 0 ? Optional.empty() : Optional.of(moves.get(0));
         //return board.getPossibleMoves().stream().findAny();

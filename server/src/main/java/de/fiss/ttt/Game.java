@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public class Game {
     private static Integer[] scores = { 0, 0 , 0};
 
-    private static final int dimension = 3;
+    private static final int dimension = 4;
     private static volatile int[][] game = new int[dimension][dimension];
     private static volatile int toPlay = 1; // new Random().nextInt() % 2 + 1
 
@@ -22,11 +22,15 @@ public class Game {
                 row >= dimension ||
                 col >= dimension ||
                 game[row] [col] != 0) {
-            throw new IllegalArgumentException("Illegal Move");
+            System.out.println("ERROR: Illegal move! Game: " + Arrays.deepToString(game));
+            System.out.println("Player " + player + " played (" + row + "," + col + ")");
+            return;
         }
 
-        if(player != toPlay)
-            throw new IllegalArgumentException("Not players turn");
+        if(player != toPlay) {
+            System.out.println("ERROR: Not player " + player + " turn!");
+            return;
+        }
 
         game[row][col] = player;
 
