@@ -1,8 +1,9 @@
 # maven
-/*/target
+/*/target/
 
 # gradle
 /*/.gradle
+/*/build/
 
 # java
 *.class
