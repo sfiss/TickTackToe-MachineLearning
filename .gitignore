@@ -1,5 +1,8 @@
 # maven
-/projects/*/target
+/*/target
+
+# gradle
+/*/.gradle
 
 # java
 *.class
@@ -18,3 +21,4 @@ hs_err_pid*
 
 # IntelliJ
 /.idea/
+
