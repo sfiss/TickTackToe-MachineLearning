@@ -6,7 +6,4 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("singleton")
 public class Games {
-    public void create() {
-
-    }
 }

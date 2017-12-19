@@ -12,6 +12,7 @@ public class TTTController {
 
     @RequestMapping(value = "/game", method = RequestMethod.GET)
     public String game() {
+        Game.init();
         return "Game should be created";
     }
 
