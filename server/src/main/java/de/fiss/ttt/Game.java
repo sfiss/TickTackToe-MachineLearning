@@ -2,8 +2,11 @@ package de.fiss.ttt;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Game {
+    private static Integer[] scores = { 0, 0 , 0};
+
     private static final int dimension = 3;
     private static volatile int[][] game = new int[dimension][dimension];
     private static volatile int toPlay = 1; // new Random().nextInt() % 2 + 1
@@ -31,7 +34,11 @@ public class Game {
 
         // log and reset
         if(isFinished()) {
-            System.out.println("**** Winner " + getWinner() + " game " + Arrays.deepToString(game));
+            scores[getWinner()]++;
+            System.out.println("**** Score "
+                    + String.join(" - ", Arrays.asList(scores).stream().map(s -> Integer.toString(s)).collect(Collectors.toList()))
+                    + " \ngame "
+                    + Arrays.deepToString(game));
             Game.init();
         }
     }
