@@ -7,10 +7,19 @@ buildscript {
     }
 }
 
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.11'
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
+
+lombok {
+    version = "1.16.4"
+    sha256 = "3ca225ce3917eac8bf4b7d2186845df4e70dcdede356dca8537b6d78a535c91e"
+}
 
 jar {
     baseName = 'ttt-client-sf'
