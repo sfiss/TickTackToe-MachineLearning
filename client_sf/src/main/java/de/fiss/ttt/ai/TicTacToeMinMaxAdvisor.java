@@ -2,7 +2,9 @@ package de.fiss.ttt.ai;
 
 import de.fiss.ttt.model.TicTacToeGame;
 
-public class TicTacToeMinMaxAdvisor extends MinMaxMoveAdvisor<TicTacToeGame.State, TicTacToeGame.Move, TicTacToeGame> {
+public class TicTacToeMinMaxAdvisor
+        //extends MinMaxMoveAdvisor<TicTacToeGame.State, TicTacToeGame.Move, TicTacToeGame> {
+        extends AlphaBetaMoveAdvisor<TicTacToeGame.State, TicTacToeGame.Move, TicTacToeGame> {
 
     @Override
     protected int evaluate(TicTacToeGame board, TicTacToeGame.State state) {
