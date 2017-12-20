@@ -1,6 +1,6 @@
 import de.fiss.ttt.GameDTO;
-import de.fiss.ttt.ai.TicTacToeMinMaxAdvisor;
-import de.fiss.ttt.model.TicTacToeGame;
+import de.fiss.ttt.ai.tictactoe.TicTacToeMinMaxAdvisor;
+import de.fiss.ttt.model.tictactoe.TicTacToeGame;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

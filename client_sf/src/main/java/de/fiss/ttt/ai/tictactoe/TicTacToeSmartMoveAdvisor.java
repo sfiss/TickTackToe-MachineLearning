@@ -1,7 +1,7 @@
-package de.fiss.ttt.ai;
+package de.fiss.ttt.ai.tictactoe;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import de.fiss.ttt.model.TicTacToeGame;
+import de.fiss.ttt.ai.MoveAdvisor;
+import de.fiss.ttt.model.tictactoe.TicTacToeGame;
 
 import java.util.ArrayList;
 import java.util.Collections;

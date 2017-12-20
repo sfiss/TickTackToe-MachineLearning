@@ -1,7 +1,7 @@
-package de.fiss.ttt.model;
+package de.fiss.ttt.model.tictactoe;
 
 import de.fiss.ttt.GameDTO;
-import org.apache.commons.lang3.tuple.Pair;
+import de.fiss.ttt.model.Board;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.*;

@@ -1,10 +1,11 @@
-package de.fiss.ttt.ai;
+package de.fiss.ttt.ai.tictactoe;
 
-import de.fiss.ttt.model.TicTacToeGame;
+import de.fiss.ttt.ai.AlphaBetaMoveAdvisor;
+import de.fiss.ttt.model.tictactoe.TicTacToeGame;
 
 public class TicTacToeMinMaxAdvisor
         //extends MinMaxMoveAdvisor<TicTacToeGame.State, TicTacToeGame.Move, TicTacToeGame> {
-        extends AlphaBetaMoveAdvisor<TicTacToeGame.State, TicTacToeGame.Move, TicTacToeGame> {
+        extends AlphaBetaMoveAdvisor<TicTacToeGame.State, TicTacToeGame, TicTacToeGame.Move> {
 
     @Override
     protected int evaluate(TicTacToeGame board, TicTacToeGame.State state) {

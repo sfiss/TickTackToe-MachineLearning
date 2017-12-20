@@ -6,7 +6,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Optional;
 
-public abstract class AlphaBetaMoveAdvisor<S, M extends Move<S>, B extends Board<S, M>> implements MoveAdvisor<B, M> {
+public abstract class AlphaBetaMoveAdvisor<S, B extends Board<S, M>, M extends Move<S>> implements MoveAdvisor<B, M> {
 
     protected int maxDepth = 10;//Integer.MAX_VALUE;
 

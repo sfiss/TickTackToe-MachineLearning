@@ -1,9 +1,8 @@
 package de.fiss.ttt;
 
 import de.fiss.ttt.ai.MoveAdvisor;
-import de.fiss.ttt.ai.RandomMoveAdvisor;
-import de.fiss.ttt.ai.TicTacToeMinMaxAdvisor;
-import de.fiss.ttt.model.TicTacToeGame;
+import de.fiss.ttt.ai.tictactoe.TicTacToeMinMaxAdvisor;
+import de.fiss.ttt.model.tictactoe.TicTacToeGame;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;

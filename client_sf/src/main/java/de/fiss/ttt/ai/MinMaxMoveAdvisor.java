@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public abstract class MinMaxMoveAdvisor<S, M extends Move<S>, B extends Board<S, M>> implements MoveAdvisor<B, M> {
+public abstract class MinMaxMoveAdvisor<S, B extends Board<S, M>, M extends Move<S>> implements MoveAdvisor<B, M> {
 
     protected int maxDepth = 6;//Integer.MAX_VALUE;
 
