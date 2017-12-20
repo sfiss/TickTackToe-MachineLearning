@@ -5,12 +5,12 @@ import de.fiss.ttt.model.Move;
 import de.fiss.ttt.model.TreeNode;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public abstract class MCTSAdvisor<S, B extends Board<S, M>, M extends Move<S>> implements MoveAdvisor<B, M> {
-
-    private final int maxNumberOfIterations = 1000;
 
     protected boolean isLeaf(B board, S state) {
         return board.getPossibleMoves(state).size() == 0;
@@ -20,35 +20,55 @@ public abstract class MCTSAdvisor<S, B extends Board<S, M>, M extends Move<S>> i
 
     @Override
     public Optional<M> suggestMove(B board) {
-        TreeNode<S> tree = new TreeNode<>(board.getState(), null);
+        TreeNode<S, M> tree = new TreeNode<>(board.getState(), null, null);
+        long maxNumberOfIterations = System.currentTimeMillis() + (1000 * 1);
         // tree search learning
         mcts(board, tree, maxNumberOfIterations);
 
-        // select best node
-        TreeNode<S> bestNode = null;
+        // select best node (note: should take the minimal node, as opponent plays next)
+        TreeNode<S, M> bestNode = tree.getChildren().stream().min(Comparator.comparing(node -> node.getScore())).orElse(tree);
 
-        return null;
+        return Optional.ofNullable(bestNode.getParentMove());
     }
 
-    private void mcts(B board, TreeNode<S> tree, int iteration) {
-        while(iteration-- > 0) {
+    private void mcts(B board, TreeNode<S, M> tree, long iteration) {
+        int count = 0;
+        while(iteration > System.currentTimeMillis()) {
+            count++;
+            System.out.println("STARTED ITERATION");
+            print(tree, 0);
             // selection
-            TreeNode<S> selectedNode = selection(tree);
+            TreeNode<S, M> selectedNode = selection(tree);
+            System.out.println("SELECT " + selectedNode.getState());
 
             // expansion
             selectedNode.expand(board);
+            System.out.println("EXPAND " + selectedNode.getState());
 
             // simulation
-            TreeNode<S> explorableNode = selectedNode.getChildren().stream()
+            TreeNode<S, M> explorableNode = selectedNode.getChildren().stream()
                     .findAny().orElse(selectedNode);
             S rolloutResult = simulation(board, explorableNode);
+            System.out.println("EXPLORE " + explorableNode.getState());
+            System.out.println("RESULT " + rolloutResult);
 
             // backpropagation
             backpropagation(board, explorableNode, rolloutResult);
+
+            // debug: print tree
+            System.out.println("AFTER ITERATION: ");
+            print(tree, 0);
         }
+        System.out.println("Learned " + count + " times :)");
     }
 
-    private void backpropagation(B board, TreeNode<S> exploredNode, S rolloutResult) {
+    private void print(TreeNode<S, M> tree, int level) {
+        Function<TreeNode<S, M>, String> formatter = (node) -> tree.getState().toString() + " (" + tree.getVisited() + "/" + tree.getScore() + ")";
+        System.out.println(String.join("",IntStream.range(0, level).mapToObj(i -> "-").collect(Collectors.toList())) + formatter.apply(tree));
+        tree.getChildren().forEach(n -> print(n, level+1));
+    }
+
+    private void backpropagation(B board, TreeNode<S, M> exploredNode, S rolloutResult) {
         if(exploredNode == null)
             return;
         // if player is the opponent, then the score is opposite
@@ -60,7 +80,7 @@ public abstract class MCTSAdvisor<S, B extends Board<S, M>, M extends Move<S>> i
 
     // TODO: could possibly add depth limit
     // Note: return final state instead of evaluation/rollout result
-    private S simulation(B board, TreeNode<S> parentNode) {
+    private S simulation(B board, TreeNode<S, M> parentNode) {
         // if leaf: evaluate
         if (isLeaf(board, parentNode.getState()))
             return parentNode.getState();
@@ -73,13 +93,13 @@ public abstract class MCTSAdvisor<S, B extends Board<S, M>, M extends Move<S>> i
                     return new ArrayList<>(moves).get(new Random().nextInt(moves.size()));
                 }).get();
         // Note: this will create new detached nodes
-        TreeNode<S> selectedNode = new TreeNode<>(selectedMove.apply(parentNode.getState()), null);
+        TreeNode<S, M> selectedNode = new TreeNode<>(selectedMove.apply(parentNode.getState()), selectedMove, null);
         return simulation(board, selectedNode);
 
     }
 
-    private TreeNode<S> selection(TreeNode<S> parentNode) {
-        Optional<TreeNode<S>> node = parentNode.getChildren().stream()
+    private TreeNode<S, M> selection(TreeNode<S, M> parentNode) {
+        Optional<TreeNode<S, M>> node = parentNode.getChildren().stream()
                 .max(Comparator.comparing(c ->
                         UCT.uctValue(parentNode.getVisited(), c.getScore(), c.getVisited())));
 
