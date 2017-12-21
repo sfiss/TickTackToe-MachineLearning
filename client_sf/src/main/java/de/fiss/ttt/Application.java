@@ -42,9 +42,12 @@ public class Application {
                 continue;
             }
 
-            Optional<TicTacToeGame.Move> suggestedMove = advisor.suggestMove(new TicTacToeGame(game));
+            TicTacToeGame ttt = new TicTacToeGame(game);
+            Optional<TicTacToeGame.Move> suggestedMove = advisor.suggestMove(ttt);
             if (suggestedMove.isPresent()) {
                 TicTacToeGame.Move move = suggestedMove.get();
+                System.out.println("State " + ttt.getState());
+                System.out.println("Move " + move);
                 restTemplate.postForLocation(String.format("http://localhost:8080/game/play?row=%d&column=%d&player=%d",
                         move.row, move.col, move.value), null);
             } else {

@@ -7,6 +7,7 @@ import lombok.Value;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
@@ -15,13 +16,13 @@ public class TreeNode<S, M extends Move<S>> {
     private final S state;
     private final M parentMove;
     private final TreeNode<S, M> parent;
-    private Collection<TreeNode<S, M>> children = new ArrayList<>();
+    private List<TreeNode<S, M>> children = new ArrayList<>();
     private int visited = 0;
     private double score = 0.0;
 
 
     public Collection<TreeNode<S, M>> getChildren() {
-        return Collections.unmodifiableCollection(children);
+        return Collections.unmodifiableList(children);
     }
 
     public <B extends Board<S, M>> void expand(B board) {

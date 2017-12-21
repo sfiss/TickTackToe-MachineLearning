@@ -3,6 +3,10 @@ package de.fiss.ttt.ai;
 import de.fiss.ttt.model.Board;
 import de.fiss.ttt.model.Move;
 import de.fiss.ttt.model.TreeNode;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 import java.util.function.Function;
@@ -10,6 +14,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Log4j2
 public abstract class MCTSAdvisor<S, B extends Board<S, M>, M extends Move<S>> implements MoveAdvisor<B, M> {
 
     protected boolean isLeaf(B board, S state) {
@@ -21,57 +26,59 @@ public abstract class MCTSAdvisor<S, B extends Board<S, M>, M extends Move<S>> i
     @Override
     public Optional<M> suggestMove(B board) {
         TreeNode<S, M> tree = new TreeNode<>(board.getState(), null, null);
-        long maxNumberOfIterations = System.currentTimeMillis() + (1000 * 1);
+
+        // TODO: make this configurable
+        long maxNumberOfIterations = 1000;//System.currentTimeMillis() + (1000 * 1);
+
         // tree search learning
         mcts(board, tree, maxNumberOfIterations);
 
-        // select best node (note: should take the minimal node, as opponent plays next)
-        TreeNode<S, M> bestNode = tree.getChildren().stream().min(Comparator.comparing(node -> node.getScore())).orElse(tree);
+        // select best node
+        // Note: Taking WinRatio instead of score or uct
+        Comparator<TreeNode<S, M>> comparator = Comparator.comparing(node ->
+                // node.getScore()
+                // UCT.uctValue(tree.getVisited(), node.getScore(), node.getVisited())
+                node.getScore() / ((double) node.getVisited())
+        );
+        TreeNode<S, M> bestNode = tree.getChildren().stream().max(comparator).orElse(tree);
 
         return Optional.ofNullable(bestNode.getParentMove());
     }
 
     private void mcts(B board, TreeNode<S, M> tree, long iteration) {
         int count = 0;
-        while(iteration > System.currentTimeMillis()) {
+        log.debug("Started MCTS");
+        while(iteration > count) {//iteration > System.currentTimeMillis()
             count++;
-            System.out.println("STARTED ITERATION");
-            print(tree, 0);
             // selection
             TreeNode<S, M> selectedNode = selection(tree);
-            System.out.println("SELECT " + selectedNode.getState());
+            log.debug("Selected " + selectedNode.getState());
 
             // expansion
-            selectedNode.expand(board);
-            System.out.println("EXPAND " + selectedNode.getState());
+            if(!isLeaf(board, selectedNode.getState())) {
+                selectedNode.expand(board);
+                log.debug("Expanded " + selectedNode.getState());
+            }
 
             // simulation
             TreeNode<S, M> explorableNode = selectedNode.getChildren().stream()
                     .findAny().orElse(selectedNode);
             S rolloutResult = simulation(board, explorableNode);
-            System.out.println("EXPLORE " + explorableNode.getState());
-            System.out.println("RESULT " + rolloutResult);
+            log.debug("Simulated " + explorableNode.getState());
+            log.debug("Result " + rolloutResult);
 
             // backpropagation
             backpropagation(board, explorableNode, rolloutResult);
-
-            // debug: print tree
-            System.out.println("AFTER ITERATION: ");
-            print(tree, 0);
+            log.debug("Backpropagation done");
         }
-        System.out.println("Learned " + count + " times :)");
-    }
-
-    private void print(TreeNode<S, M> tree, int level) {
-        Function<TreeNode<S, M>, String> formatter = (node) -> tree.getState().toString() + " (" + tree.getVisited() + "/" + tree.getScore() + ")";
-        System.out.println(String.join("",IntStream.range(0, level).mapToObj(i -> "-").collect(Collectors.toList())) + formatter.apply(tree));
-        tree.getChildren().forEach(n -> print(n, level+1));
+        //Collection<?> uctValues = tree.getChildren().stream().map(c -> UCT.uctValue(tree.getVisited(), c.getScore(), c.getVisited())).collect(Collectors.toList());
+        //Collection<?> winratio = tree.getChildren().stream().map(c -> c.getScore()/((double)c.getVisited())).collect(Collectors.toList());
+        log.debug(String.format("Learning phase over. Executed %d times", count));
     }
 
     private void backpropagation(B board, TreeNode<S, M> exploredNode, S rolloutResult) {
         if(exploredNode == null)
             return;
-        // if player is the opponent, then the score is opposite
         double score = evaluate(board, exploredNode.getState(), rolloutResult);
         exploredNode.addScore(score);
 
@@ -103,7 +110,11 @@ public abstract class MCTSAdvisor<S, B extends Board<S, M>, M extends Move<S>> i
                 .max(Comparator.comparing(c ->
                         UCT.uctValue(parentNode.getVisited(), c.getScore(), c.getVisited())));
 
-        return node.orElseGet(() -> parentNode);
+        if(node.isPresent()) {
+            return selection(node.get());
+        }
+
+        return parentNode;
     }
 }
 

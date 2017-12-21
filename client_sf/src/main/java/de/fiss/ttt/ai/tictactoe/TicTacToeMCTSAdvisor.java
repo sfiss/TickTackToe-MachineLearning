@@ -12,6 +12,7 @@ public class TicTacToeMCTSAdvisor
        int winner = board.getWinner(resultState.game);
        if(winner == 0)
            return 0;
-       return winner == atState.player ? 1 : -1;
+       // TODO: winner should not be the one whose turn it is?
+       return winner != atState.player ? 1 : -1;
     }
 }
