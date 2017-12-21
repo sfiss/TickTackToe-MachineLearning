@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public class Game {
     private static Integer[] scores = { 0, 0 , 0};
 
-    private static final int dimension = 4;
+    private static final int dimension = 3;
     private static volatile int[][] game = new int[dimension][dimension];
     private static volatile int toPlay = 1; // new Random().nextInt() % 2 + 1
 
