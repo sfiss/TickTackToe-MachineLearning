@@ -107,7 +107,7 @@ public class Game {
 
 
 
-    public static GameDTO getGame() {
+    public synchronized static GameDTO getGame() {
          return new GameDTO(game, getWinner(), toPlay);
     }
 }
