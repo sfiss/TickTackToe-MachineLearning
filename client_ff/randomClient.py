@@ -6,7 +6,7 @@ from random import randint
 
 INVALID_MOVE = 'invalid_move'
 VERY_LOW = -50000
-board_dimension = 3
+board_dimension = 4
 player = 1
 max_player = 2
 

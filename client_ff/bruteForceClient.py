@@ -9,7 +9,7 @@ VERY_LOW = -50000
 board_dimension = 4
 player = 1
 max_player = 2
-max_level = 2
+max_level = 3
 
 best_move = [-1, -1]
 nodes_found = 0
