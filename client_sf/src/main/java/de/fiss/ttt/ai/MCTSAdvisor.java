@@ -34,11 +34,13 @@ public abstract class MCTSAdvisor<S, B extends Board<S, M>, M extends Move<S>> i
         mcts(board, tree, maxNumberOfIterations);
 
         // select best node
-        // Note: Taking WinRatio instead of score or uct
+        // Note: Taking most simulations played (according to wiki) instead of winratio, score or uct
+        // Note: win-ratio also seemed to work!
         Comparator<TreeNode<S, M>> comparator = Comparator.comparing(node ->
                 // node.getScore()
                 // UCT.uctValue(tree.getVisited(), node.getScore(), node.getVisited())
-                node.getScore() / ((double) node.getVisited())
+                //node.getScore() / ((double) node.getVisited())
+                node.getVisited()
         );
         TreeNode<S, M> bestNode = tree.getChildren().stream().max(comparator).orElse(tree);
 
@@ -71,8 +73,6 @@ public abstract class MCTSAdvisor<S, B extends Board<S, M>, M extends Move<S>> i
             backpropagation(board, explorableNode, rolloutResult);
             log.debug("Backpropagation done");
         }
-        //Collection<?> uctValues = tree.getChildren().stream().map(c -> UCT.uctValue(tree.getVisited(), c.getScore(), c.getVisited())).collect(Collectors.toList());
-        //Collection<?> winratio = tree.getChildren().stream().map(c -> c.getScore()/((double)c.getVisited())).collect(Collectors.toList());
         log.debug(String.format("Learning phase over. Executed %d times", count));
     }
 
