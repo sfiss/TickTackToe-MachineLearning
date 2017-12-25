@@ -28,7 +28,7 @@ public abstract class MCTSAdvisor<S, B extends Board<S, M>, M extends Move<S>> i
         TreeNode<S, M> tree = new TreeNode<>(board.getState(), null, null);
 
         // TODO: make this configurable
-        long maxNumberOfIterations = 1000;//System.currentTimeMillis() + (1000 * 1);
+        long maxNumberOfIterations = 10000;//System.currentTimeMillis() + (1000 * 1);
 
         // tree search learning
         mcts(board, tree, maxNumberOfIterations);
@@ -67,12 +67,13 @@ public abstract class MCTSAdvisor<S, B extends Board<S, M>, M extends Move<S>> i
                     .findAny().orElse(selectedNode);
             S rolloutResult = simulation(board, explorableNode);
             log.debug("Simulated " + explorableNode.getState());
-            log.debug("Result " + rolloutResult);
+            log.debug("Result " + rolloutResult + " = " + evaluate(board, tree.getState(), rolloutResult));
 
             // backpropagation
             backpropagation(board, explorableNode, rolloutResult);
             log.debug("Backpropagation done");
         }
+        //log.info("Tree-visits: " + Arrays.deepToString(tree.getChildren().stream().map(c -> c.getVisited()).toArray()));
         log.debug(String.format("Learning phase over. Executed %d times", count));
     }
 
