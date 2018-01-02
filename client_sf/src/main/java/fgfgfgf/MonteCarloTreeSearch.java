@@ -7,10 +7,6 @@ public class MonteCarloTreeSearch {
     private static final int WIN_SCORE = 10;
     private int oponent;
 
-    private int getMillisForCurrentLevel() {
-        return 2 * (3 - 1) + 1;
-    }
-
     public Board findNextMove(Board board, int playerNo) {
         long start = System.currentTimeMillis();
         long end = start + 60 * 10;
@@ -66,8 +62,8 @@ public class MonteCarloTreeSearch {
         Node tempNode = nodeToExplore;
         while (tempNode != null) {
             tempNode.getState().incrementVisit();
-            if (tempNode.getState().getPlayerNo() == playerNo)
-                tempNode.getState().addScore(WIN_SCORE);
+            double score = playerNo == 0 ? 0 : (tempNode.getState().getPlayerNo() == playerNo ? 1 : -1) ;
+            tempNode.getState().addScore(score);
             tempNode = tempNode.getParent();
         }
     }

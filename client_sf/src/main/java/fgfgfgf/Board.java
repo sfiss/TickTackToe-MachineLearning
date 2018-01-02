@@ -1,6 +1,7 @@
 package fgfgfgf;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Board {
@@ -57,39 +58,44 @@ public class Board {
         this.boardValues = boardValues;
     }
 
+    private int getWinner(int[] row) {
+        int firstValue = row[0];
+        return Arrays.stream(row).allMatch(i -> i == firstValue) ? firstValue : 0;
+    }
+
     public int checkStatus() {
         int boardSize = boardValues.length;
         int maxIndex = boardSize - 1;
         int[] diag1 = new int[boardSize];
         int[] diag2 = new int[boardSize];
-        
+
         for (int i = 0; i < boardSize; i++) {
             int[] row = boardValues[i];
             int[] col = new int[boardSize];
             for (int j = 0; j < boardSize; j++) {
                 col[j] = boardValues[j][i];
             }
-            
-            int checkRowForWin = checkForWin(row);
+
+            int checkRowForWin = getWinner(row);
             if(checkRowForWin!=0)
                 return checkRowForWin;
-            
-            int checkColForWin = checkForWin(col);
+
+            int checkColForWin = getWinner(col);
             if(checkColForWin!=0)
                 return checkColForWin;
-            
+
             diag1[i] = boardValues[i][i];
             diag2[i] = boardValues[maxIndex - i][i];
         }
 
-        int checkDia1gForWin = checkForWin(diag1);
+        int checkDia1gForWin = getWinner(diag1);
         if(checkDia1gForWin!=0)
             return checkDia1gForWin;
-        
-        int checkDiag2ForWin = checkForWin(diag2);
+
+        int checkDiag2ForWin = getWinner(diag2);
         if(checkDiag2ForWin!=0)
             return checkDiag2ForWin;
-        
+
         if (getEmptyPositions().size() > 0)
             return IN_PROGRESS;
         else
@@ -113,16 +119,6 @@ public class Board {
             return 0;
     }
 
-    public void printBoard() {
-        int size = this.boardValues.length;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                System.out.print(boardValues[i][j] + " ");
-            }
-            System.out.println();
-        }
-    }
-
     public List<Position> getEmptyPositions() {
         int size = this.boardValues.length;
         List<Position> emptyPositions = new ArrayList<>();
@@ -133,22 +129,5 @@ public class Board {
             }
         }
         return emptyPositions;
-    }
-
-    public void printStatus() {
-        switch (this.checkStatus()) {
-        case P1:
-            System.out.println("Player 1 wins");
-            break;
-        case P2:
-            System.out.println("Player 2 wins");
-            break;
-        case DRAW:
-            System.out.println("Game Draw");
-            break;
-        case IN_PROGRESS:
-            System.out.println("Game In rogress");
-            break;
-        }
     }
 }

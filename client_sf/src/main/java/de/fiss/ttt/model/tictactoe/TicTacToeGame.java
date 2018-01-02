@@ -86,6 +86,10 @@ public class TicTacToeGame implements Board<TicTacToeGame.State, TicTacToeGame.M
         gameState = new State(currentState.getGame(), currentState.getToPlay());
     }
 
+    public TicTacToeGame(State currentState) {
+        gameState = currentState;
+    }
+
     @Override
     public Collection<Move> getPossibleMoves(final State state) {
         int dimension = state.getDimension();
@@ -112,58 +116,43 @@ public class TicTacToeGame implements Board<TicTacToeGame.State, TicTacToeGame.M
         return gameState;
     }
 
+    private int getWinner(int[] row) {
+        int firstValue = row[0];
+        return Arrays.stream(row).allMatch(i -> i == firstValue) ? firstValue : 0;
+    }
+
     public int getWinner(int[][] game) {
-        int dimension = game.length;
+        int boardSize = game.length;
+        int maxIndex = boardSize - 1;
+        int[] diag1 = new int[boardSize];
+        int[] diag2 = new int[boardSize];
 
-        // check rows
-        outer:
-        for (int row = 0; row < dimension; row++) {
-            int value = game[row][0];
-            if (value == 0)
-                continue outer;
-            inner:
-            for (int col = 1; col < dimension; col++) {
-                if (game[row][col] != value)
-                    continue outer;
+        for (int i = 0; i < boardSize; i++) {
+            int[] row = game[i];
+            int[] col = new int[boardSize];
+            for (int j = 0; j < boardSize; j++) {
+                col[j] = game[j][i];
             }
-            return value;
+
+            int checkRowForWin = getWinner(row);
+            if(checkRowForWin!=0)
+                return checkRowForWin;
+
+            int checkColForWin = getWinner(col);
+            if(checkColForWin!=0)
+                return checkColForWin;
+
+            diag1[i] = game[i][i];
+            diag2[i] = game[maxIndex - i][i];
         }
 
-        // check columns
-        outer:
-        for (int row = 0; row < dimension; row++) {
-            int value = game[0][row];
-            if (value == 0)
-                continue outer;
-            inner:
-            for (int col = 1; col < dimension; col++) {
-                if (game[col][row] != value)
-                    continue outer;
-            }
-            return value;
-        }
+        int checkDia1gForWin = getWinner(diag1);
+        if(checkDia1gForWin!=0)
+            return checkDia1gForWin;
 
-        // check diagonal 1
-        int winner = game[0][0];
-        for (int i = 1; i < dimension; i++) {
-            if (game[i][i] != winner) {
-                winner = 0;
-                break;
-            }
-        }
-        if(winner > 0)
-            return winner;
-
-        winner = game[dimension-1][dimension-1];
-        for (int i = dimension-1; i >= 0; i--) {
-            if (game[i][i] != winner) {
-                winner = 0;
-                break;
-            }
-        }
-
-        if(winner > 0)
-            return winner;
+        int checkDiag2ForWin = getWinner(diag2);
+        if(checkDiag2ForWin!=0)
+            return checkDiag2ForWin;
 
         return 0;
     }
