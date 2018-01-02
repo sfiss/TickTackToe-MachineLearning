@@ -15,13 +15,45 @@ import java.util.Optional;
 public class AdvisorTest {
 
     @Test
-    public void test_MCTS2_vs_AlphaBeta() {
+    public void test_Random_vs_AlphaBeta() {
         MoveAdvisor<TicTacToeGame, TicTacToeGame.Move> random = new RandomMoveAdvisor<>();
         MoveAdvisor<TicTacToeGame, TicTacToeGame.Move> mcts = new TicTacToeMCTSAdvisor();
         MoveAdvisor<TicTacToeGame, TicTacToeGame.Move> minmax = new TicTacToeMinMaxAdvisor();
         int[] outcomes = new int[3];
         int count = 0;
-        while (count < 100) {
+        while (count < 30) {
+            int outcome = runGame(random, minmax);
+            outcomes[outcome]++;
+            count++;
+        }
+        System.out.println(Arrays.toString(outcomes));
+
+    }
+
+    @Test
+    public void test_MCTS_vs_AlphaBeta() {
+        MoveAdvisor<TicTacToeGame, TicTacToeGame.Move> random = new RandomMoveAdvisor<>();
+        MoveAdvisor<TicTacToeGame, TicTacToeGame.Move> mcts = new TicTacToeMCTSAdvisor();
+        MoveAdvisor<TicTacToeGame, TicTacToeGame.Move> minmax = new TicTacToeMinMaxAdvisor();
+        int[] outcomes = new int[3];
+        int count = 0;
+        while (count < 30) {
+            int outcome = runGame(mcts, minmax);
+            outcomes[outcome]++;
+            count++;
+        }
+        System.out.println(Arrays.toString(outcomes));
+
+    }
+
+    @Test
+    public void test_Random_vs_MCTS() {
+        MoveAdvisor<TicTacToeGame, TicTacToeGame.Move> random = new RandomMoveAdvisor<>();
+        MoveAdvisor<TicTacToeGame, TicTacToeGame.Move> mcts = new TicTacToeMCTSAdvisor();
+        MoveAdvisor<TicTacToeGame, TicTacToeGame.Move> minmax = new TicTacToeMinMaxAdvisor();
+        int[] outcomes = new int[3];
+        int count = 0;
+        while (count < 30) {
             int outcome = runGame(random, mcts);
             outcomes[outcome]++;
             count++;
@@ -31,7 +63,7 @@ public class AdvisorTest {
     }
 
     private int runGame(MoveAdvisor<TicTacToeGame, TicTacToeGame.Move> advisor1, MoveAdvisor<TicTacToeGame, TicTacToeGame.Move> advisor2) {
-        int[][] board = {{1,0,0}, {0,0,0}, {0,0,0}};
+        int[][] board = {{0,0,0}, {0,0,0}, {0,0,0}};
         int player = 1;
         GameDTO emptyGame = new GameDTO(board, 0,player);
         TicTacToeGame game = new TicTacToeGame(emptyGame);
@@ -40,12 +72,12 @@ public class AdvisorTest {
         while(suggestedMove.isPresent()) {
             state = suggestedMove.get().apply(state);
             game = new TicTacToeGame(state);
+            player = 3 - player;
             if(player == 1) {
                 suggestedMove = advisor1.suggestMove(game);
             } else {
                 suggestedMove = advisor2.suggestMove(game);
             }
-            player = 3 - player;
         }
 
         return game.getWinner(state.game);
