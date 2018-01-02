@@ -1,11 +1,15 @@
 import de.fiss.ttt.GameDTO;
 import de.fiss.ttt.ai.MoveAdvisor;
 import de.fiss.ttt.ai.RandomMoveAdvisor;
+import de.fiss.ttt.ai.mcts.MCTS;
+import de.fiss.ttt.ai.tictactoe.TicTacToeMCTS2Adapter;
 import de.fiss.ttt.ai.tictactoe.TicTacToeMCTSAdvisor;
 import de.fiss.ttt.ai.tictactoe.TicTacToeMinMaxAdvisor;
 import de.fiss.ttt.model.Board;
 import de.fiss.ttt.model.Move;
 import de.fiss.ttt.model.State;
+import de.fiss.ttt.model.mcts.Game;
+import de.fiss.ttt.model.tictactoe.TTTGame;
 import de.fiss.ttt.model.tictactoe.TicTacToeGame;
 import org.junit.Test;
 
@@ -13,6 +17,21 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public class AdvisorTest {
+
+    @Test
+    public void test_1vs2() {
+        MoveAdvisor<TicTacToeGame, TicTacToeGame.Move> mcts = new TicTacToeMCTSAdvisor();
+        MoveAdvisor<TicTacToeGame, TicTacToeGame.Move> mcts2 = new TicTacToeMCTS2Adapter();
+        int[] outcomes = new int[3];
+        int count = 0;
+        while (count < 30) {
+            int outcome = runGame(mcts, mcts2);
+            outcomes[outcome]++;
+            count++;
+        }
+        System.out.println(Arrays.toString(outcomes));
+
+    }
 
     @Test
     public void test_Random_vs_AlphaBeta() {
