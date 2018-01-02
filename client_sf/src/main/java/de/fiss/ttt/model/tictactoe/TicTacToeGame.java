@@ -45,6 +45,9 @@ public class TicTacToeGame implements Board<TicTacToeGame.State, TicTacToeGame.M
     public static class State {
         public final int[][] game;
 
+        /**
+         * Player whose turn it is
+         */
         public final int player;
 
         public State(int[][] game, int player) {
@@ -77,10 +80,10 @@ public class TicTacToeGame implements Board<TicTacToeGame.State, TicTacToeGame.M
     }
 
 
-    private State state;
+    private State gameState;
 
     public TicTacToeGame(GameDTO currentState) {
-        state = new State(currentState.getGame(), currentState.getToPlay());
+        gameState = new State(currentState.getGame(), currentState.getToPlay());
     }
 
     @Override
@@ -99,14 +102,14 @@ public class TicTacToeGame implements Board<TicTacToeGame.State, TicTacToeGame.M
                 .flatMap(x -> x)
                 // filter those that are free to play
                 .filter(p -> p.getRight() == 0)
-                // add a move that sets the free field to the current player
+                // add a Move that sets the free field to the current player
                 .map(p -> new Move(p.getLeft(), p.getMiddle(), state.player))
                 .collect(Collectors.toList());
     }
 
     @Override
     public TicTacToeGame.State getState() {
-        return state;
+        return gameState;
     }
 
     public int getWinner(int[][] game) {

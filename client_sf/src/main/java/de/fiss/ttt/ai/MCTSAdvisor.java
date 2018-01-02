@@ -94,7 +94,7 @@ public abstract class MCTSAdvisor<S, B extends Board<S, M>, M extends Move<S>> i
             return parentNode.getState();
 
         // play till end
-        // TODO: better move selection
+        // TODO: better Move selection
         M selectedMove = // board.getPossibleMoves(parentNode.getState()).stream().findAny().get();
                 ((Supplier<M>) () -> {
                     Collection<M> moves = board.getPossibleMoves(parentNode.getState());

@@ -1,6 +1,6 @@
 package de.fiss.ttt.model;
 
 @FunctionalInterface
-public interface Move<BoardState> {
-    BoardState apply(BoardState state);
+public interface Move<S> {
+    S apply(S state);
 }

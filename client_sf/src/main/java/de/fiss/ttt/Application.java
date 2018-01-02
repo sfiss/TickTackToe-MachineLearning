@@ -51,7 +51,7 @@ public class Application {
                 restTemplate.postForLocation(String.format("http://localhost:8080/game/play?row=%d&column=%d&player=%d",
                         move.row, move.col, move.value), null);
             } else {
-                throw new RuntimeException("Can not perform move");
+                throw new RuntimeException("Can not perform Move");
             }
         }
     }
